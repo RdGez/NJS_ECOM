@@ -1,6 +1,10 @@
 import cors from "cors"
 import morgan from "morgan"
+import dotenv from "dotenv"
+import { mongoConnection } from "./db.config"
 import express, { Application } from "express"
+
+dotenv.config()
 
 class Server {
   private _port: String;
@@ -13,6 +17,11 @@ class Server {
       throw new Error(`Invalid port: ${this._port}`)
 
     this.middlewares()
+    this.initialize()
+  }
+
+  async initialize() {
+    await mongoConnection()
   }
 
   middlewares() {
