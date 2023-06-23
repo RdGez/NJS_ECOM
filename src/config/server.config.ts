@@ -7,7 +7,7 @@ import morgan from "morgan"
 import { ApolloServer } from "apollo-server-express"
 import { typeDefs, resolvers } from './GraphQL/schema';
 
-import authRoutes from "../routes/auth.routes"
+import authRoutes from "../modules/auth/auth.routes"
 
 dotenv.config()
 

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { NextFunction, Response } from "express";
-import { IJwtPayload } from "../../shared/interfaces/jwt.interface";
+import { IJwtPayload } from "../../../../shared/interfaces/jwt.interface";
 
 export default (req: any, res: Response, next: NextFunction) => {
   const token = req.header("token");

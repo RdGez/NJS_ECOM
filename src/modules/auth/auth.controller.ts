@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
-import User from "../models/User.model";
-import signJwt from "../utils/helpers/sign.jwt";
+import User from "../../shared/models/User.model";
+import signJwt from "./utils/helpers/sign.jwt";
 
 export const signUp = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    const hasUser = await User.findOne({ email });
+    const hasUser = await User.findOne({ email: email.toLowerCase() });
     if (hasUser) {
       return res.status(400).json({
         message: "User already exists.",

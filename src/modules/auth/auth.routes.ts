@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { renewToken, signIn, signUp } from "../controllers/auth.controller";
-import validateJwt from "../utils/middlewares/validate.jwt";
+import { renewToken, signIn, signUp } from "./auth.controller";
+import validateJwt from "./utils/middlewares/validate.jwt";
 
 const router = Router();
 
