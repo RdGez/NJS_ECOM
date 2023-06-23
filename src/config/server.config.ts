@@ -4,6 +4,8 @@ import dotenv from "dotenv"
 import { mongoConnection } from "./db.config"
 import express, { Application } from "express"
 
+import authRoutes from "../routes/auth.routes"
+
 dotenv.config()
 
 class Server {
@@ -18,6 +20,7 @@ class Server {
 
     this.middlewares()
     this.initialize()
+    this.routes()
   }
 
   async initialize() {
@@ -35,6 +38,10 @@ class Server {
     this._app.listen(this._port, () =>
       console.log(`Server Running At: http://localhost:${process.env.PORT} 🚀`)
     )
+  }
+
+  routes() {
+    this._app.use("/api/auth", authRoutes)
   }
 }
 
