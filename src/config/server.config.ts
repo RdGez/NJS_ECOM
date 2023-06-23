@@ -1,8 +1,12 @@
-import cors from "cors"
-import morgan from "morgan"
-import dotenv from "dotenv"
 import { mongoConnection } from "./db.config"
+import cors from "cors"
+import dotenv from "dotenv"
 import express, { Application } from "express"
+import morgan from "morgan"
+
+import { ApolloServer } from "apollo-server-express"
+import { typeDefs } from './GraphQL/typeDefs';
+import { resolvers } from './GraphQL/resolvers';
 
 import authRoutes from "../routes/auth.routes"
 
@@ -34,7 +38,15 @@ class Server {
     this._app.use(express.static("public"))
   }
 
-  listen() {
+  async listen() {
+    const apolloServer = new ApolloServer({
+      typeDefs,
+      resolvers
+    })
+
+    await apolloServer.start()
+    apolloServer.applyMiddleware({ app: this._app })
+
     this._app.listen(this._port, () =>
       console.log(`Server Running At: http://localhost:${process.env.PORT} 🚀`)
     )
