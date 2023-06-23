@@ -5,8 +5,7 @@ import express, { Application } from "express"
 import morgan from "morgan"
 
 import { ApolloServer } from "apollo-server-express"
-import { typeDefs } from './GraphQL/typeDefs';
-import { resolvers } from './GraphQL/resolvers';
+import { typeDefs, resolvers } from './GraphQL/schema';
 
 import authRoutes from "../routes/auth.routes"
 

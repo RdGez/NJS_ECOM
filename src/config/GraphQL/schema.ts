@@ -1,5 +1,11 @@
 import { gql } from "apollo-server-express";
 
+export const resolvers = {
+  Query: {
+    hello: () => "Hello world!",
+  },
+};
+
 export const typeDefs = gql`
   type Query {
     hello: String!
