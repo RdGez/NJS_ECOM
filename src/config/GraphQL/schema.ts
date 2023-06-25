@@ -1,13 +1,8 @@
 import { gql } from "apollo-server-express";
+import { 
+  types as productTypes, 
+  resolvers as productResolvers
+} from '../../modules/products/graphql'
 
-export const resolvers = {
-  Query: {
-    hello: () => "Hello world!",
-  },
-};
-
-export const typeDefs = gql`
-  type Query {
-    hello: String!
-  }
-`;
+export const typeDefs = [ productTypes ]
+export const resolvers = [ productResolvers ]
