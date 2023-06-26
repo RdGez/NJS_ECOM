@@ -15,6 +15,15 @@ export const types = gql`
 
   type Query {
     getAllProducts: [Product!]
+    getProductById(id: ID!): Product!
+  }
+
+  input ProductInput {
+    name: String
+    description: String
+    sku: String
+    price: Float
+    stock: Int
   }
 
   type Mutation {
@@ -24,6 +33,11 @@ export const types = gql`
       sku: String!
       price: Float!
       stock: Int!
+    ): Product!
+
+    updateProduct(
+      id: ID!
+      product: ProductInput!
     ): Product!
   }
 `;
