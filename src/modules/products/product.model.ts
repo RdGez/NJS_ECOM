@@ -1,5 +1,6 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { IProduct } from "../../shared/interfaces/schema.interfaces";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const ProductSchema = new Schema(
   {
@@ -36,11 +37,14 @@ const ProductSchema = new Schema(
   { timestamps: true }
 );
 
-ProductSchema.method("toJSON", function () {
+
+ProductSchema
+.plugin(mongoosePaginate)
+.method("toJSON", function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
 
   return object;
 });
 
-export default model<IProduct>("Product", ProductSchema);
+export default model<IProduct, mongoose.PaginateModel<IProduct>>("Product", ProductSchema);

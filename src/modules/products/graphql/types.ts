@@ -13,9 +13,22 @@ export const types = gql`
     updatedAt: String
   }
 
-  type Query {
-    getAllProducts: [Product!]
-    getProductById(id: ID!): Product!
+  type Pagination {
+    totalDocs: Int,
+    offset: Int,
+    limit: Int,
+    totalPages: Int,
+    page: Int,
+    pagingCounter: Int,
+    hasPrevPage: Boolean,
+    hasNextPage: Boolean,
+    prevPage: Int,
+    nextPage: Int
+  }
+
+  type ProductsResponse {
+    products: [Product]
+    pagination: Pagination
   }
 
   input ProductInput {
@@ -24,6 +37,11 @@ export const types = gql`
     sku: String
     price: Float
     stock: Int
+  }
+
+  type Query {
+    getAllProducts(page: Int, limit: Int): ProductsResponse!
+    getProductById(id: ID!): Product!
   }
 
   type Mutation {

@@ -1,14 +1,19 @@
 import Product from "../product.model";
 
-const getAllProducts = async () => {
-  const products = await Product.find().limit(16);
-  return products;
+const getAllProducts = async (_, args) => {
+  const { limit = 10, page = 0 } = args;
+  const { docs, ...pagination } = await Product.paginate({}, { limit, page });
+
+  return {
+    products: docs,
+    pagination,
+  };
 };
 
 const getProductById = async (_, args) => {
   const product = await Product.findById(args.id);
   return product;
-}
+};
 
 const createProduct = async (_, args) => {
   const product = new Product(args);
@@ -22,14 +27,16 @@ const updateProduct = async (_, args) => {
 
   try {
     const product = await Product.findById(id);
-    if (!product) throw new Error('Product not found');
+    if (!product) throw new Error("Product not found");
 
-    const productUpdated = await Product.findByIdAndUpdate(id, args.product, { new: true });
+    const productUpdated = await Product.findByIdAndUpdate(id, args.product, {
+      new: true,
+    });
     return productUpdated;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 
 export const resolvers = {
   Query: {
@@ -38,6 +45,6 @@ export const resolvers = {
   },
   Mutation: {
     createProduct,
-    updateProduct
+    updateProduct,
   },
 };
