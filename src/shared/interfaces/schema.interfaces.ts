@@ -12,3 +12,10 @@ export interface IProduct {
   stock: number;
   imageUrl?: string[];
 }
+
+export interface IOrder {
+  products: IProduct[];
+  user: IUser;
+  status: string;
+  total: number;
+}
