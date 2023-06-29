@@ -1,4 +1,7 @@
+import { uploadImage } from "../../../shared/utils/cloudinary.upload";
+import { GraphQLUpload } from "graphql-upload-minimal";
 import Product from "../product.model";
+import fs from "fs";
 
 const getAllProducts = async (_, args) => {
   const { limit = 10, page = 0 } = args;
@@ -15,9 +18,24 @@ const getProductById = async (_, args) => {
   return product;
 };
 
-const createProduct = async (_, args) => {
-  const product = new Product(args);
-  await product.save();
+const createProduct = async (_, { docs, ...data }) => {
+  const product = new Product(data);
+  const { _id } = await product.save();
+
+  if (docs) {
+    const imageUrl: string[] = [];
+
+    for (const doc of docs) {
+      const { createReadStream } = await doc;
+      const stream = createReadStream();
+
+      const { secure_url } = await uploadImage(stream);
+      imageUrl.push(secure_url);
+    }
+
+    const product = await Product.findByIdAndUpdate(_id, { imageUrl }, { new: true });
+    return product;
+  }
 
   return product;
 };
@@ -39,6 +57,7 @@ const updateProduct = async (_, args) => {
 };
 
 export const resolvers = {
+  Upload: GraphQLUpload,
   Query: {
     getAllProducts,
     getProductById,

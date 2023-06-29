@@ -15,10 +15,12 @@
   "dependencies": {
     "apollo-server-express": "^3.12.0",
     "bcrypt": "^5.1.0",
+    "cloudinary": "^1.37.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "graphql": "^16.7.1",
+    "graphql-upload-minimal": "^1.5.4",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.3.1",
     "mongoose-paginate-v2": "^1.7.1",

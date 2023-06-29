@@ -1,6 +1,14 @@
 import { gql } from "apollo-server-express";
 
 export const types = gql`
+  scalar Upload
+
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   type Product {
     id: ID
     name: String
@@ -14,15 +22,15 @@ export const types = gql`
   }
 
   type Pagination {
-    totalDocs: Int,
-    offset: Int,
-    limit: Int,
-    totalPages: Int,
-    page: Int,
-    pagingCounter: Int,
-    hasPrevPage: Boolean,
-    hasNextPage: Boolean,
-    prevPage: Int,
+    totalDocs: Int
+    offset: Int
+    limit: Int
+    totalPages: Int
+    page: Int
+    pagingCounter: Int
+    hasPrevPage: Boolean
+    hasNextPage: Boolean
+    prevPage: Int
     nextPage: Int
   }
 
@@ -50,12 +58,10 @@ export const types = gql`
       description: String!
       sku: String!
       price: Float!
-      stock: Int!
-    ): Product!
+      stock: Int!,
+      docs: [Upload!]
+    ): Product
 
-    updateProduct(
-      id: ID!
-      product: ProductInput!
-    ): Product!
+    updateProduct(id: ID!, product: ProductInput!): Product!
   }
 `;

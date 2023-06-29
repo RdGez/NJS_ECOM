@@ -9,6 +9,7 @@ import { IContext, context } from './GraphQL/context';
 import { typeDefs, resolvers } from "./GraphQL/schema";
 
 import authRoutes from "../modules/auth/auth.routes";
+import { graphqlUploadExpress } from "graphql-upload-minimal";
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ class Server {
     this._app.use(morgan("dev"));
     this._app.use(express.json());
     this._app.use(express.static("public"));
+    this._app.use( '/graphql', graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 5 }))
   }
 
   async listen() {
