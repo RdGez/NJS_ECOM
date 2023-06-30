@@ -1,7 +1,6 @@
 import { uploadImage } from "../../../shared/utils/cloudinary.upload";
 import { GraphQLUpload } from "graphql-upload-minimal";
 import Product from "../product.model";
-import fs from "fs";
 
 const getAllProducts = async (_, args) => {
   const { limit = 10, page = 0 } = args;
