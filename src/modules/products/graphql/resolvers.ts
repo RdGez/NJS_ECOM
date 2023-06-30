@@ -46,6 +46,9 @@ const updateProduct = async (_, args) => {
 const uploadProductImages = async (_, { id, docs }) => {
   if (!docs) throw new Error("You must upload at least one image.");
 
+  const pruductExist = await Product.findById({ _id: id });
+  if (!pruductExist) throw new Error("Product not found.");
+
   const images: Object[] = [];
 
   for (const doc of docs) {

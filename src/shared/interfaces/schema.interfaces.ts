@@ -10,7 +10,7 @@ export interface IProduct {
   sku: string;
   price: number;
   stock: number;
-  imageUrl?: string[];
+  images?: [ IImage ];
 }
 
 export interface IOrder {
