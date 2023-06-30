@@ -22,7 +22,6 @@ export function uploadImage(file: any): any {
 
       file.pipe(uploadStream);
     } catch (error) {
-      console.log(error);
       reject(error);
     }
   });

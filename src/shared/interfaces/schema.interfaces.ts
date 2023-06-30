@@ -19,3 +19,8 @@ export interface IOrder {
   status: string;
   total: number;
 }
+
+export interface IImage {
+  public_id: string;
+  secure_url: string;
+}

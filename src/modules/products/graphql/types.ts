@@ -9,6 +9,11 @@ export const types = gql`
     encoding: String!
   }
 
+  type Images {
+    public_id: String
+    secure_url: String
+  }
+
   type Product {
     id: ID
     name: String
@@ -16,7 +21,7 @@ export const types = gql`
     sku: String
     price: Float
     stock: Int
-    imageUrl: [String]
+    images: [Images]
     createdAt: String
     updatedAt: String
   }
@@ -58,10 +63,9 @@ export const types = gql`
       description: String!
       sku: String!
       price: Float!
-      stock: Int!,
-      docs: [Upload!]
+      stock: Int!
     ): Product
-
     updateProduct(id: ID!, product: ProductInput!): Product!
+    uploadProductImages(id: ID!, docs: [Upload!]!): Product!
   }
 `;

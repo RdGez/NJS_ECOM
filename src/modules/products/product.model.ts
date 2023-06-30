@@ -2,6 +2,17 @@ import mongoose, { Schema, model } from "mongoose";
 import { IProduct } from "../../shared/interfaces/schema.interfaces";
 import mongoosePaginate from "mongoose-paginate-v2";
 
+const ImagesSchema = new Schema({
+  public_id: {
+    type: String,
+    require: true,
+  },
+  secure_url: {
+    type: String,
+    require: true,
+  },
+});
+
 const ProductSchema = new Schema(
   {
     name: {
@@ -29,8 +40,8 @@ const ProductSchema = new Schema(
       type: [String],
       require: false,
     },
-    imageUrl: {
-      type: [String],
+    images: {
+      type: [ImagesSchema],
       require: false,
     },
   },
