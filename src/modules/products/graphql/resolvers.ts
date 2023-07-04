@@ -1,4 +1,4 @@
-import { uploadImage } from "../../../shared/utils/cloudinary.upload";
+import { deleteimages, uploadImage } from "../../../shared/utils/cloudinary.upload";
 import { GraphQLUpload } from "graphql-upload-minimal";
 import Product from "../product.model";
 
@@ -44,10 +44,15 @@ const updateProduct = async (_, args) => {
 };
 
 const uploadProductImages = async (_, { id, docs }) => {
-  if (!docs) throw new Error("You must upload at least one image.");
+  // if (!docs) throw new Error("You must upload at least one image.");
 
-  const pruductExist = await Product.findById({ _id: id });
-  if (!pruductExist) throw new Error("Product not found.");
+  const productExist = await Product.findById({ _id: id });
+  if (!productExist) throw new Error("Product not found.");
+
+  if ( productExist && productExist.images && productExist.images.length > 0 ) {
+    const fileNames = productExist.images.map((image) => image.public_id);
+    await deleteimages(fileNames);
+  }
 
   const images: Object[] = [];
 
@@ -56,11 +61,10 @@ const uploadProductImages = async (_, { id, docs }) => {
     const stream = createReadStream();
 
     const { public_id, secure_url } = await uploadImage(stream);
-    const name = public_id.split("/")[1];
 
     images.push({
-      public_id: name,
-      secure_url: secure_url,
+      public_id,
+      secure_url,
     });
   }
   
