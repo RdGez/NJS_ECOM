@@ -21,7 +21,7 @@ export const signUp = async (req: Request, res: Response) => {
     user.password = bcrypt.hashSync(password, salt);
     await user.save();
 
-    const token = await signJwt(user.id);
+    const token = await signJwt(user.id, user.role);
     return res.status(200).json({
       ok: true,
       token,
@@ -52,7 +52,7 @@ export const signIn = async (req: Request, res: Response) => {
       });
     }
 
-    const token = await signJwt(user.id);
+    const token = await signJwt(user.id, user.role);
     return res.status(200).json({
       ok: true,
       token,
@@ -68,7 +68,13 @@ export const signIn = async (req: Request, res: Response) => {
 export const renewToken = async (req: any, res: Response) => {
   const id = req.id;
   const user = await User.findById(id);
-  const token = await signJwt(id);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found.",
+    });
+  }
+
+  const token = await signJwt(id, user.role);
 
   if (!token || !user) {
     return res.status(404).json({

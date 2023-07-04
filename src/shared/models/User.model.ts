@@ -15,6 +15,11 @@ const UserSchema = new Schema<IUser>({
     type: String,
     require: true,
   },
+  role: {
+    type: String,
+    enum: ["ADMIN_ROLE", "USER_ROLE"],
+    default: "USER_ROLE",
+  }
 }, { timestamps: true })
 
 UserSchema.method("toJSON", function () {
