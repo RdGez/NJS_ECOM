@@ -9,6 +9,7 @@ import { IContext, context } from './GraphQL/context';
 import { typeDefs, resolvers } from "./GraphQL/schema";
 
 import authRoutes from "../modules/auth/auth.routes";
+import orderRoutes from "../modules/orders/orders.routes";
 import { graphqlUploadExpress } from "graphql-upload-minimal";
 
 dotenv.config();
@@ -57,6 +58,7 @@ class Server {
 
   routes() {
     this._app.use("/api/auth", authRoutes);
+    this._app.use("/api/orders", orderRoutes);
   }
 }
 

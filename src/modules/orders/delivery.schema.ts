@@ -14,7 +14,7 @@ export const DeliveryDetailsSchema = new Schema({
       require: true,
     },
     zip: {
-      type: String,
+      type: String || Number,
       require: true,
     },
     country: {
