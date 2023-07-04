@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2';
 import { IOrder } from "../../shared/interfaces/schema.interfaces";
+import { DeliveryDetailsSchema } from "./delivery.schema";
 
 const OrderSchema = new Schema(
   {
@@ -17,8 +18,12 @@ const OrderSchema = new Schema(
     status: {
       required: true,
       type: String,
-      enum: ["pending", "sent", "completed", "cancelled"],
+      enum: ["pending", "sent", "delivered", "canceled"],
       default: "pending",
+    },
+    deliveryDetails: {
+      type: DeliveryDetailsSchema,
+      required: true,
     },
     total: {
       required: true,
