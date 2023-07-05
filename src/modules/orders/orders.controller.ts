@@ -8,8 +8,19 @@ export const createOrder = async (req: any, res: Response) => {
 
   try {
     const dbProducts = await Product.find({ _id: { $in: products } })
-      .select("price")
+      .select("price stock")
       .lean();
+
+    if (dbProducts) {
+      dbProducts.forEach((product) => {
+        if (product.stock <= 0) {
+          return res.status(400).json({
+            ok: false,
+            message: `Product ${product.name} is out of stock.`,
+          });
+        }
+      });
+    }
 
     const total = dbProducts
       .reduce((acc, curr) => acc + curr.price, 0)
@@ -113,8 +124,8 @@ export const updateOrder = async (req: any, res: Response) => {
   const { ...args } = req.body;
 
   try {
-    const order = await Order.findByIdAndUpdate(id, args, { new: true })
-    
+    const order = await Order.findByIdAndUpdate(id, args, { new: true });
+
     return res.status(200).json({
       ok: true,
       order,

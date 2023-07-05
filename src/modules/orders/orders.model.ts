@@ -29,6 +29,11 @@ const OrderSchema = new Schema(
       required: true,
       type: Number,
     },
+    currency: {
+      required: true,
+      type: String,
+      default: "MXN",
+    }
   },
   { timestamps: true }
 );
