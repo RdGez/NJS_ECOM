@@ -67,7 +67,7 @@ export const getOrdersByUser = async (req: any, res: Response) => {
     return res.status(200).json({
       ok: true,
       orders: docs,
-      pagination
+      pagination,
     });
   } catch (error) {
     console.error(error);
@@ -97,7 +97,27 @@ export const getOrders = async (req: any, res: Response) => {
     return res.status(200).json({
       ok: true,
       orders: docs,
-      pagination
+      pagination,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      ok: false,
+      message: "Internal server error.",
+    });
+  }
+};
+
+export const updateOrder = async (req: any, res: Response) => {
+  const { id } = req.params;
+  const { ...args } = req.body;
+
+  try {
+    const order = await Order.findByIdAndUpdate(id, args, { new: true })
+    
+    return res.status(200).json({
+      ok: true,
+      order,
     });
   } catch (error) {
     console.error(error);
