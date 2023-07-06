@@ -1,80 +1,41 @@
 import { Response } from "express";
 import Product from "../products/product.model";
 import axios from "axios";
-import {
-  PAYPAL_API,
-  PAYPAL_CLIENT_ID,
-  PAYPAL_SECRET_KEY,
-} from "../../config/config";
+import { auth, PAYPAL_API } from "../../config/config";
+import { buildPayload } from "./utils/paypal.payload";
+import { getOrder } from "./utils/paypal.request";
 
 export const createPaymentOrder = async (req: any, res: Response) => {
-  const { products, currency } = req.body;
+  const { car, currency } = req.body;
 
-  const dbProducts = await Product.find({ _id: { $in: products } })
-    .select("price stock")
+  const productsToFind = car.map((item: any) => item.product);
+  let products = await Product.find({ _id: { $in: productsToFind } })
+    .select("name sku price stock")
     .lean();
 
-  if (dbProducts) {
-    dbProducts.forEach((product) => {
-      if (product.stock <= 0) {
-        return res.status(400).json({
-          ok: false,
-          message: `Product ${product.name} is out of stock.`,
-        });
-      }
+  if (!products)
+    return res.status(400).json({
+      ok: false,
+      message: `Products not found.`,
     });
+
+  for (let i = 0; i < car.length; i++) {
+    if (car[i].quantity > products[i].stock)
+      return res.status(400).json({
+        ok: false,
+        message: `Product ${products[i].name} is out of stock.`,
+      });
   }
 
-  const total = dbProducts
-    .reduce((acc, curr) => acc + curr.price, 0)
-    .toFixed(2);
-
-  const order = {
-    intent: "CAPTURE",
-    purchase_units: [
-      {
-        amount: {
-          currency_code: currency,
-          value: total,
-          breakdown: {
-            item_total: {
-              currency_code: currency,
-              value: total,
-            },
-          },
-        },
-      },
-    ],
-    application_context: {
-      brand_name: "eCommerse",
-      landing_page: "NO_PREFERENCE",
-      user_action: "PAY_NOW",
-      return_url: `${process.env.HOST}/orders/capture-order`,
-      cancel_url: `https://www.paypal.com`,
-    },
-  };
-
-  const params = new URLSearchParams();
-  params.append("grant_type", "client_credentials");
-
-  const {
-    data: { access_token },
-  } = await axios.post(`${PAYPAL_API}/v1/oauth2/token`, params, {
-    auth: {
-      username: PAYPAL_CLIENT_ID,
-      password: PAYPAL_SECRET_KEY,
-    },
+  products = products.map((product: any, index: number) => {
+    const quantity = car[index].quantity;
+    const totalPrice = quantity * product.price;
+    delete product.stock;
+    return { ...product, quantity, totalPrice };
   });
 
-  const { data } = await axios.post(
-    `${process.env.PAYPAL_URL}/v2/checkout/orders`,
-    order,
-    {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    }
-  );
+  const orderPayload = buildPayload(products, currency);
+  const data = await getOrder(orderPayload);
 
   return res.status(200).json({
     ok: true,
@@ -87,13 +48,23 @@ export const captureOrder = async (req: any, res: Response) => {
   const { data } = await axios.post(
     `${PAYPAL_API}/v2/checkout/orders/${token}/capture`,
     {},
-    {
-      auth: {
-        username: PAYPAL_CLIENT_ID,
-        password: PAYPAL_SECRET_KEY,
-      },
-    }
+    { auth }
   );
-  
-  return res.send("ok");
+
+  // TODO: Save order in database
+
+  return res.send("Payment Captured!");
+};
+
+export const cancelOrder = async (req: any, res: Response) => {
+  const { token } = req.query;
+  const { data } = await axios.post(
+    `${PAYPAL_API}/v2/checkout/orders/${token}/cancel`,
+    {},
+    { auth }
+  );
+
+  // TODO: Return stock to products
+
+  return res.send("Payment Canceled!");
 };

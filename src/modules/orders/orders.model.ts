@@ -1,13 +1,33 @@
 import mongoose, { Schema, model } from "mongoose";
-import mongoosePaginate from 'mongoose-paginate-v2';
+import mongoosePaginate from "mongoose-paginate-v2";
 import { IOrder } from "../../shared/interfaces/schema.interfaces";
 import { DeliveryDetailsSchema } from "./delivery.schema";
+
+const ProductsToOrderSchema = new Schema({
+  product: {
+    required: true,
+    type: Schema.Types.ObjectId,
+    ref: "Product",
+  },
+  quantity: {
+    required: true,
+    type: Number,
+  },
+  pricePerUnit: {
+    required: true,
+    type: Number, 
+  },
+  totalPrice: {
+    required: true,
+    type: Number,
+  }
+});
 
 const OrderSchema = new Schema(
   {
     products: {
       required: true,
-      type: [Schema.Types.ObjectId],
+      type: [ProductsToOrderSchema],
       ref: "Product",
     },
     user: {
@@ -33,18 +53,19 @@ const OrderSchema = new Schema(
       required: true,
       type: String,
       default: "MXN",
-    }
+    },
   },
   { timestamps: true }
 );
 
-OrderSchema
-.plugin(mongoosePaginate)
-.method("toJSON", function () {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    
-    return object;
+OrderSchema.plugin(mongoosePaginate).method("toJSON", function () {
+  const { __v, _id, ...object } = this.toObject();
+  object.id = _id;
+
+  return object;
 });
 
-export default model<IOrder, mongoose.PaginateModel<IOrder>>("Order", OrderSchema);
+export default model<IOrder, mongoose.PaginateModel<IOrder>>(
+  "Order",
+  OrderSchema
+);
