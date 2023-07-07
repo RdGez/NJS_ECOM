@@ -9,7 +9,6 @@ import {
   registerProduct,
   modifyProduct,
 } from "../product.controller";
-import { GraphQLError } from "graphql";
 import Product from "../product.model";
 import { errorHandler } from "../../../shared/utils/graphql.error.handler";
 
