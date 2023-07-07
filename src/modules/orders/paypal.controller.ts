@@ -4,9 +4,10 @@ import axios from "axios";
 import { auth, PAYPAL_API } from "../../config/config";
 import { buildPayload } from "./utils/paypal.payload";
 import { getOrder } from "./utils/paypal.request";
+import Order from "./orders.model"
 
 export const createPaymentOrder = async (req: any, res: Response) => {
-  const { car, currency } = req.body;
+  const { car, deliveryDetails, currency } = req.body;
 
   const productsToFind = car.map((item: any) => item.product);
   let products = await Product.find({ _id: { $in: productsToFind } })
@@ -27,15 +28,25 @@ export const createPaymentOrder = async (req: any, res: Response) => {
       });
   }
 
-  products = products.map((product: any, index: number) => {
-    const quantity = car[index].quantity;
-    const totalPrice = quantity * product.price;
+  let quantity = 0;
+  let totalPrice = 0;
+
+  products = products.map<any>((product: any, index: number) => {
+    quantity = car[index].quantity;
+    totalPrice = quantity * product.price;
     delete product.stock;
     return { ...product, quantity, totalPrice };
   });
 
   const orderPayload = buildPayload(products, currency);
   const data = await getOrder(orderPayload);
+
+  const order = new Order({
+    user: req.id,
+    products,
+    deliveryDetails,
+    total: totalPrice
+  })
 
   return res.status(200).json({
     ok: true,
@@ -52,6 +63,7 @@ export const captureOrder = async (req: any, res: Response) => {
   );
 
   // TODO: Save order in database
+  console.log('Captured:', data);
 
   return res.send("Payment Captured!");
 };
@@ -65,6 +77,7 @@ export const cancelOrder = async (req: any, res: Response) => {
   );
 
   // TODO: Return stock to products
+  console.log('Canceled:', data);
 
   return res.send("Payment Canceled!");
 };

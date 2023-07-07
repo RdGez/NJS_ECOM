@@ -4,16 +4,19 @@ import { IOrder } from "../../shared/interfaces/schema.interfaces";
 import { DeliveryDetailsSchema } from "./delivery.schema";
 
 const ProductsToOrderSchema = new Schema({
-  product: {
+  name: {
     required: true,
-    type: Schema.Types.ObjectId,
-    ref: "Product",
+    type: String,
+  },
+  sku: {
+    required: true,
+    type: String,
   },
   quantity: {
     required: true,
     type: Number,
   },
-  pricePerUnit: {
+  price: {
     required: true,
     type: Number, 
   },
@@ -38,8 +41,8 @@ const OrderSchema = new Schema(
     status: {
       required: true,
       type: String,
-      enum: ["pending", "sent", "delivered", "canceled"],
-      default: "pending",
+      enum: ['created', 'paid', 'cancelled', 'pending', 'sent', 'delivered'],
+      default: "created",
     },
     deliveryDetails: {
       type: DeliveryDetailsSchema,

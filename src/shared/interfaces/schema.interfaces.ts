@@ -12,6 +12,8 @@ export interface IProduct {
   price: number;
   stock: number;
   images?: [ IImage ];
+  quantity?: number;
+  totalPrice?: number;
 }
 
 export interface IOrder {
