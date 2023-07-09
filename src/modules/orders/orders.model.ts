@@ -1,30 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 import { IOrder } from "../../shared/interfaces/schema.interfaces";
-import { DeliveryDetailsSchema } from "./delivery.schema";
-
-const ProductsToOrderSchema = new Schema({
-  name: {
-    required: true,
-    type: String,
-  },
-  sku: {
-    required: true,
-    type: String,
-  },
-  quantity: {
-    required: true,
-    type: Number,
-  },
-  price: {
-    required: true,
-    type: Number, 
-  },
-  totalPrice: {
-    required: true,
-    type: Number,
-  }
-});
+import { DeliveryDetailsSchema, PaymentSchema, ProductsToOrderSchema } from "./models";
 
 const OrderSchema = new Schema(
   {
@@ -48,14 +25,18 @@ const OrderSchema = new Schema(
       type: DeliveryDetailsSchema,
       required: true,
     },
-    total: {
+    paymentDetails: {
+      type: PaymentSchema,
       required: true,
-      type: Number,
     },
     currency: {
       required: true,
       type: String,
       default: "MXN",
+    },
+    total: {
+      required: true,
+      type: Number,
     },
   },
   { timestamps: true }

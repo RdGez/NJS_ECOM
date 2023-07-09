@@ -40,13 +40,21 @@ export const createPaymentOrder = async (req: any, res: Response) => {
 
   const orderPayload = buildPayload(products, currency);
   const data = await getOrder(orderPayload);
+  const total = products.reduce((acc: number, item: any) => acc + item.totalPrice, 0)
 
   const order = new Order({
     user: req.id,
     products,
     deliveryDetails,
-    total: totalPrice
+    paymentDetails: {
+      method: "paypal",
+      referenceNumber: data.id,
+    },
+    currency,
+    total,
   })
+
+  await order.save();
 
   return res.status(200).json({
     ok: true,
@@ -62,8 +70,10 @@ export const captureOrder = async (req: any, res: Response) => {
     { auth }
   );
 
-  // TODO: Save order in database
-  console.log('Captured:', data);
+  await Order.findOneAndUpdate(
+    { 'paymentDetails.referenceNumber': data.id },
+    { status: 'paid' },
+  )
 
   return res.send("Payment Captured!");
 };
@@ -76,8 +86,10 @@ export const cancelOrder = async (req: any, res: Response) => {
     { auth }
   );
 
-  // TODO: Return stock to products
-  console.log('Canceled:', data);
+  await Order.findOneAndUpdate(
+    { 'paymentDetails.referenceNumber': data.id },
+    { status: 'cancelled' },
+  )
 
   return res.send("Payment Canceled!");
 };
