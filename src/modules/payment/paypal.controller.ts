@@ -4,7 +4,7 @@ import axios from "axios";
 import { auth, PAYPAL_API } from "../../config/config";
 import { buildPayload } from "./utils/paypal.payload";
 import { getOrder } from "./utils/paypal.request";
-import Order from "./orders.model"
+import Order from "../orders/orders.model"
 
 export const createPaymentOrder = async (req: any, res: Response) => {
   const { car, deliveryDetails, currency } = req.body;
