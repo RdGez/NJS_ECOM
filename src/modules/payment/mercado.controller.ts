@@ -1,39 +1,18 @@
 import { Response } from "express";
-import mercadopago from "mercadopago";
 import { MERCADO_PAGO_ACCESS_TOKEN } from "../../config/config";
-import Product from "../products/product.model";
+import { prepareItems } from "./helpers/prepare-items";
+import mercadopago from "mercadopago";
 
 export const createPreference = async (req: any, res: Response) => {
   const { car, deliveryDetails, currency } = req.body;
 
-  const productsToFind = car.map((item: any) => item.product);
-  let products = await Product.find({ _id: { $in: productsToFind } })
-    .select("name sku price stock")
-    .lean();
+  const { products, total, error } = await prepareItems(car);
 
-  if (!products)
+  if (error)
     return res.status(400).json({
       ok: false,
-      message: `Products not found.`,
+      message: error.message,
     });
-
-  for (let i = 0; i < car.length; i++) {
-    if (car[i].quantity > products[i].stock)
-      return res.status(400).json({
-        ok: false,
-        message: `Product ${products[i].name} is out of stock.`,
-      });
-  }
-
-  let quantity = 0;
-  let totalPrice = 0;
-
-  products = products.map<any>((product: any, index: number) => {
-    quantity = car[index].quantity;
-    totalPrice = quantity * product.price;
-    delete product.stock;
-    return { ...product, quantity, totalPrice };
-  });
 
   mercadopago.configure({
     access_token: MERCADO_PAGO_ACCESS_TOKEN,
@@ -44,10 +23,11 @@ export const createPreference = async (req: any, res: Response) => {
     unit_price: product.price,
     quantity: product.quantity,
     currency_id: currency,
+    total_amount: product.totalPrice,
   }));
 
   const data = await mercadopago.preferences.create({ items });
-  console.log(data)
+  console.log(data);
 
   res.send("Create Preference");
 };
