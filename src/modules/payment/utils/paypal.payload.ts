@@ -38,8 +38,8 @@ export const buildPayload = (
       user_action: "PAY_NOW",
       brand_name: "RdGez Store",
       landing_page: "NO_PREFERENCE",
-      return_url: `${HOST}/orders/capture-order`,
-      cancel_url: `${HOST}/orders/cancel-order`,
+      return_url: `${HOST}/payment/capture-order`,
+      cancel_url: `${HOST}/payment/cancel-order`,
     },
   };
 };
