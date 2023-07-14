@@ -4,10 +4,10 @@ export const PaymentSchema = new Schema({
     method: {
         required: true,
         type: String,
-        enum: ['paypal', 'card'],
+        enum: ['paypal', 'mercadopago', 'card'],
     },
     referenceNumber: {
-        required: true,
+        required: false,
         type: String,
     }
 })
