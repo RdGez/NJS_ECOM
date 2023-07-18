@@ -14,9 +14,7 @@ router.get('/capture-order', cancelOrder);
 
 // MercadoPago Method:
 router.post('/create-preference', validateJwt, createPreference);
-router.get('/capture-payment', (req, res) => res.send('Capture Payment'));
 router.get('/failure-payment', failurePayment);
-router.get('/pending-payment', (req, res) => res.send('Pending Payment'));
 router.post('/webhook-payment', webHook);
 
 export default router;

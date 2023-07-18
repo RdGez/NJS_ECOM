@@ -53,9 +53,7 @@ export const createPreference = async (req: any, res: Response) => {
         },
       },
       back_urls: {
-        success: `${HOST}/payment/capture-payment`,
         failure: `${HOST}/payment/failure-payment`,
-        pending: `${HOST}/payment/pending-payment`,
       },
       external_reference: _id.toString(),
       notification_url: `https://6a01-201-160-222-156.ngrok-free.app/api/payment/webhook-payment`,
