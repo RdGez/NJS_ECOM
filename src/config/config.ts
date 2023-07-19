@@ -11,3 +11,6 @@ export const auth = { username: PAYPAL_CLIENT_ID, password: PAYPAL_SECRET_KEY };
 
 // Mercado Pago:
 export const MERCADO_PAGO_ACCESS_TOKEN = process.env.MERCADO_PAGO_ACCESS_TOKEN!;
+
+// Stripe:
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY!;

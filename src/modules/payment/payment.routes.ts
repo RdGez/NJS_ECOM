@@ -2,6 +2,7 @@ import { Router } from "express";
 import { cancelOrder, captureOrder, createPaymentOrder } from "../payment/paypal.controller";
 import validateJwt from "../auth/utils/middlewares/validate.jwt";
 import { createPreference, failurePayment, webHook } from "./mercado.controller";
+import { createCheckoutSession } from "./stripe.controller";
 
 const router = Router();
 
@@ -16,5 +17,10 @@ router.get('/capture-order', cancelOrder);
 router.post('/create-preference', validateJwt, createPreference);
 router.get('/failure-payment', failurePayment);
 router.post('/webhook-payment', webHook);
+
+// Stripe Method: Method:
+router.post('/create-checkout-session', validateJwt, createCheckoutSession);
+router.get('/checkout-session-completed', (req, res) => {});
+router.get('/checkout-session-canceled', (req, res) => {});
 
 export default router;
