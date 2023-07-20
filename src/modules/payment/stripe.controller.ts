@@ -1,32 +1,42 @@
-import { payment } from 'mercadopago';
-import { Response } from "express"
-import Stripe from "stripe"
-import { HOST, STRIPE_SECRET_KEY } from "../../config/config"
+import { payment } from "mercadopago";
+import { Response } from "express";
+import Stripe from "stripe";
+import { HOST, STRIPE_SECRET_KEY } from "../../config/config";
+import { prepareItems } from "./helpers/prepare-items";
+import { buildPayload } from "./utils/stripe.payload";
 
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
-    apiVersion: '2022-11-15',
-    typescript: true,
-})
+  apiVersion: "2022-11-15",
+  typescript: true,
+});
 
 export const createCheckoutSession = async (req: any, res: Response) => {
-    await stripe.checkout.sessions.create({
-        mode: 'payment',
-        payment_method_types: ['card'],
-        line_items: [
-            {
-                price_data: {
-                    product_data: {
-                        name: 'T-shirt',
-                        description: 'Comfortable cotton t-shirt',
-                        images: ['https://example.com/t-shirt.png'],
-                    },
-                    currency: 'usd',
-                    unit_amount: 2000,
-                }
-            }
-        ],
-        success_url: `${HOST}/payment/checkout-session-completed`,
-        cancel_url: `${HOST}/payment/checkout-session-canceled`,
-    })
-    return res.send("Stripe Checkout Session Created!")
-}
+  const { car, deliveryDetails, currency } = req.body;
+
+  try {
+    const { products, total, error } = await prepareItems(car);
+
+    if (error)
+      return res.status(400).json({
+        ok: false,
+        message: error.message,
+      });
+
+    const payload = buildPayload(products, currency);
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      payment_method_types: ["card"],
+      ...payload,
+    });
+
+    return res.status(200).json({
+      session,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      ok: false,
+      message: "Something went wrong",
+    });
+  }
+};

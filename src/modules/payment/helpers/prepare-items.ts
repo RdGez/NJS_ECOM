@@ -9,7 +9,7 @@ export const prepareItems = async (items: Item[]) => {
   try {
     const productsToFind = items.map((item: any) => item.product);
     let products = await Product.find({ _id: { $in: productsToFind } }).select(
-      "name description sku price stock"
+      "name description sku price stock images"
     );
 
     if (items.length !== products.length)
@@ -38,6 +38,7 @@ export const prepareItems = async (items: Item[]) => {
         description: product.description,
         sku: product.sku,
         price: product.price,
+        images: product.images,
         quantity,
         totalPrice,
       };
