@@ -12,8 +12,9 @@ export const buildPayload = (
             images: product.images.map((image: any) => image.secure_url),   
         },
         currency,
-        unit_amount: product.price
-    }
+        unit_amount_decimal: product.price,
+    },
+    quantity: product.quantity,
   }));
 
   return {
