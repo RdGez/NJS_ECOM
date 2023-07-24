@@ -12,7 +12,7 @@ export const buildPayload = (
             images: product.images.map((image: any) => image.secure_url),   
         },
         currency,
-        unit_amount_decimal: product.price,
+        unit_amount: product.price * 100,
     },
     quantity: product.quantity,
   }));

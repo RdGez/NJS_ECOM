@@ -20,7 +20,7 @@ router.post('/webhook-payment', webHook);
 
 // Stripe Method: Method:
 router.post('/create-checkout-session', validateJwt, createCheckoutSession);
-router.get('/checkout-session-completed', (req, res) => {});
-router.get('/checkout-session-canceled', (req, res) => {});
+router.get('/checkout-session-completed', (req, res) => res.send('Checkout Session Completed'));
+router.get('/checkout-session-canceled', (req, res) => res.send('Checkout Session Canceled'));
 
 export default router;
